@@ -1,6 +1,4 @@
 import tkinter as tk
-from tkinter import ttk
-import requests
 
 class Currency_Exchange_App:
     def __init__(self, master):
@@ -24,9 +22,6 @@ class Currency_Exchange_App:
         # Setup the screens
         self.welcome_screen_frame()
         self.main_screen_frame()
-
-        # Fetch currencies when the app starts
-        self.fetch_currencies()
 
     def welcome_screen_frame(self):
         # Welcome label
@@ -84,15 +79,22 @@ class Currency_Exchange_App:
         self.from_currency_var = tk.StringVar(self.main_frame)
         self.from_currency_var.set("From")  # Default text
 
-        # Using ttk.Combobox for searchable dropdown
-        self.from_currency = ttk.Combobox(
+        self.from_currency = tk.OptionMenu(
             self.main_frame,
-            textvariable=self.from_currency_var,
-            font=('Verdana', 23),
-            width=10
+            self.from_currency_var,
+            *[0]  # Placeholder, will be replaced by actual currency options later
         )
-        self.from_currency.place(x=170, y=225)
-        self.from_currency.bind("<KeyRelease>", self.filter_currencies_from)  # Bind for real-time filtering
+        self.from_currency.config(
+            bd=0,
+            width=4,
+            height=0,
+            font=('Verdana', 23),
+            highlightbackground="beige",
+            highlightcolor="beige",
+            highlightthickness=0,
+            relief='flat'
+        )
+        self.from_currency.place(x=220, y=225)
 
         # Entry field for amount
         self.entry_description = tk.Label(
@@ -128,15 +130,22 @@ class Currency_Exchange_App:
         self.to_currency_var = tk.StringVar(self.main_frame)
         self.to_currency_var.set("To")  # Default text
 
-        # Using ttk.Combobox for searchable dropdown
-        self.to_currency = ttk.Combobox(
+        self.to_currency = tk.OptionMenu(
             self.main_frame,
-            textvariable=self.to_currency_var,
-            font=('Verdana', 23),
-            width=10
+            self.to_currency_var,
+            *[0]  # Placeholder, will be replaced by actual currency options later
         )
-        self.to_currency.place(x=720, y=225)
-        self.to_currency.bind("<KeyRelease>", self.filter_currencies_to)  # Bind for real-time filtering
+        self.to_currency.config(
+            bd=0,
+            width=4,
+            height=0,
+            font=('Verdana', 23),
+            highlightbackground="beige",
+            highlightcolor="beige",
+            highlightthickness=0,
+            relief='flat'
+        )
+        self.to_currency.place(x=760, y=225)
 
         # Convert button
         self.convert_button = tk.Button(
@@ -202,39 +211,6 @@ class Currency_Exchange_App:
         self.welcome_frame.lower()  # Hides the welcome frame
         self.main_frame.lift()  # Shows the main frame
 
-    # Fetch currencies from the API
-    def fetch_currencies(self):
-        # Your API key
-        api_key = "REMOVED_OLD_KEY"
-        url = f"https://v6.exchangerate-api.com/v6/{api_key}/latest/USD"
-        response = requests.get(url)
-
-        if response.status_code == 200:
-            data = response.json()
-            self.currencies = list(data['conversion_rates'].keys())  # Fetch currency codes
-
-            # Update both comboboxes (from and to)
-            self.update_combobox(self.from_currency, self.currencies)
-            self.update_combobox(self.to_currency, self.currencies)
-        else:
-            print("Error fetching data")
-
-    # A method to update any combobox
-    def update_combobox(self, combobox, currencies):
-        combobox['values'] = currencies
-        combobox.set("")  # Default placeholder text
-
-    # Filter the currencies based on user input (for from_currency)
-    def filter_currencies_from(self, event):
-        value = self.from_currency_var.get().lower()
-        filtered_currencies = [cur for cur in self.currencies if value in cur.lower()]
-        self.from_currency['values'] = filtered_currencies
-
-    # Filter the currencies based on user input (for to_currency)
-    def filter_currencies_to(self, event):
-        value = self.to_currency_var.get().lower()
-        filtered_currencies = [cur for cur in self.currencies if value in cur.lower()]
-        self.to_currency['values'] = filtered_currencies
 
 # Create and run the application
 root = tk.Tk()
