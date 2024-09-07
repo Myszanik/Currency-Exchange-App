@@ -68,11 +68,12 @@ class Currency_Exchange_App:
         # Full-screen button
         self.continue_button = tk.Button(
             self.welcome_frame,
-            text='Welcome to Currency Exchange App',
+            text='Click anywhere to continue to the Currency Exchange App',
             font=('Papyrus', 60),
-            bg='beige',
             width=26,
             height=8,
+            wraplength=1000,  # Adjust width to fit your needs
+            justify='center',
             command=self.switch_scene
         )
         self.continue_button.place(x=0, y=0)
@@ -81,12 +82,12 @@ class Currency_Exchange_App:
         # Main screen label
         self.description = tk.Label(
             self.main_frame,
-            text='Welcome!',
-            font=('Tisa', 60),
+            text='Welcome to Currency Exchange App',
+            font=('Tisa', 55),
             fg='black',
             bg='beige'
         )
-        self.description.place(x=405, y=10)
+        self.description.place(x=110, y=12)
 
         self.description = tk.Label(
             self.main_frame,
@@ -392,8 +393,11 @@ class Currency_Exchange_App:
         else:
             self.original_currency.config(text='Invalid currency code(s).')
 
+        self.master.update_idletasks()
+
     def on_enter_press(self, event):
         self.convert_currency()
+        self.master.update_idletasks()
 
     def capitalize_letter(self, event):
         # Capitalize the first letter of the content in the entry widgets
