@@ -27,6 +27,13 @@ class Currency_Exchange_App:
         # Fetch currencies when the app starts
         self.fetch_currencies()
 
+        # Bind Enter key to the conversion function
+        self.master.bind('<Return>', self.on_enter_press)
+
+        # Bind key release to capitalize first letter
+        self.from_currency_entry.bind('<KeyRelease>', self.capitalize_letter)
+        self.to_currency_entry.bind('<KeyRelease>', self.capitalize_letter)
+
     def welcome_screen_frame(self):
         # Welcome label
         self.welcome = tk.Label(
@@ -59,7 +66,7 @@ class Currency_Exchange_App:
             fg='black',
             bg='beige'
         )
-        self.description.place(x=415, y=5)
+        self.description.place(x=415, y=10)
 
         self.description = tk.Label(
             self.main_frame,
@@ -68,7 +75,7 @@ class Currency_Exchange_App:
             fg='black',
             bg='beige'
         )
-        self.description.place(x=30, y=100)
+        self.description.place(x=30, y=130)
 
         # From currency input
         self.from_currency_description = tk.Label(
@@ -78,14 +85,15 @@ class Currency_Exchange_App:
             bg='beige',
             fg='black'
         )
-        self.from_currency_description.place(x=170, y=180)
+        self.from_currency_description.place(x=165, y=230)
 
         self.from_currency_entry = tk.Entry(
             self.main_frame,
             font=('Verdana', 23),
-            width=10
+            width=10,
+            justify='center'
         )
-        self.from_currency_entry.place(x=170, y=225)
+        self.from_currency_entry.place(x=170, y=265)
 
         # Entry field for amount
         self.amount_entry_description = tk.Label(
@@ -95,7 +103,7 @@ class Currency_Exchange_App:
             bg='beige',
             fg='black'
         )
-        self.amount_entry_description.place(x=455, y=180)
+        self.amount_entry_description.place(x=455, y=230)
 
         self.amount_entry = tk.Entry(
             self.main_frame,
@@ -103,9 +111,10 @@ class Currency_Exchange_App:
             font=('Verdana', 25),
             bg='white',
             fg='black',
-            insertbackground='black'
+            insertbackground='black',
+            justify='center'
         )
-        self.amount_entry.place(x=405, y=220)  # Adjust x and y based on your window layout
+        self.amount_entry.place(x=405, y=265)  # Adjust x and y based on your window layout
         self.amount_entry.focus_set()  # Set focus to the entry widget
 
         # To currency input
@@ -116,14 +125,15 @@ class Currency_Exchange_App:
             bg='beige',
             fg='black'
         )
-        self.to_currency_description.place(x=720, y=180)
+        self.to_currency_description.place(x=755, y=230)
 
         self.to_currency_entry = tk.Entry(
             self.main_frame,
             font=('Verdana', 23),
-            width=10
+            width=10,
+            justify='center'
         )
-        self.to_currency_entry.place(x=720, y=225)
+        self.to_currency_entry.place(x=750, y=265)
 
         # Convert button
         self.convert_button = tk.Button(
@@ -135,7 +145,7 @@ class Currency_Exchange_App:
             fg='black',
             command=self.convert_currency
         )
-        self.convert_button.place(x=295, y=310)
+        self.convert_button.place(x=295, y=350)
 
         # Labels for original and converted currencies
         self.original_currency = tk.Label(
@@ -145,7 +155,8 @@ class Currency_Exchange_App:
             bg='beige',
             fg='black'
         )
-        self.original_currency.place(x=440, y=380)
+        self.original_currency.place(x=350, y=445)
+        self.original_currency.place_forget()
 
         self.canvas = tk.Canvas(
             self.main_frame,
@@ -154,8 +165,79 @@ class Currency_Exchange_App:
             bg='beige',
             highlightthickness=0
         )
-        self.canvas.place(x=470, y=440)  # Adjust x and y as needed
+        self.canvas.place(x=470, y=510)  # Adjust x and y as needed
         self.canvas.create_line(70, 5, 70, 100, arrow=tk.LAST, fill='black', width=2)
+        self.canvas.place_forget()
+
+        self.canvas_1 = tk.Canvas(
+            self.main_frame,
+            width=0,
+            height=110,
+            bg='beige',
+            highlightthickness=1
+        )
+        self.canvas_1.create_line(70, 5, 70, 100, fill='black', width=2)
+        self.canvas_1.place(x=365, y=220)
+
+        self.canvas_2 = tk.Canvas(
+            self.main_frame,
+            width=0,
+            height=110,
+            bg='beige',
+            highlightthickness=1
+        )
+        self.canvas_2.create_line(70, 5, 70, 100, fill='black', width=2)
+        self.canvas_2.place(x=710, y=220)
+
+        self.horizontal_line = tk.Canvas(
+            self.main_frame,
+            width=1200,
+            height=0,
+            bg='beige',
+            highlightthickness=1
+        )
+        self.horizontal_line.create_line(0, 0, 1076, 0, fill='black', width=3)
+        self.horizontal_line.place(x=0, y=100)
+
+        self.horizontal_line_1 = tk.Canvas(
+            self.main_frame,
+            width=1200,
+            height=0,
+            bg='beige',
+            highlightthickness=1
+        )
+        self.horizontal_line_1.create_line(0, 0, 1076, 0, fill='black', width=3)
+        self.horizontal_line_1.place(x=0, y=220)
+
+        self.horizontal_line_2 = tk.Canvas(
+            self.main_frame,
+            width=1200,
+            height=0,
+            bg='beige',
+            highlightthickness=1
+        )
+        self.horizontal_line_2.create_line(0, 0, 1076, 0, fill='black', width=3)
+        self.horizontal_line_2.place(x=0, y=330)
+
+        self.horizontal_line_3 = tk.Canvas(
+            self.main_frame,
+            width=1200,
+            height=0,
+            bg='beige',
+            highlightthickness=1
+        )
+        self.horizontal_line_3.create_line(0, 0, 1076, 0, fill='black', width=3)
+        self.horizontal_line_3.place(x=0, y=410)
+
+        self.horizontal_line_4 = tk.Canvas(
+            self.main_frame,
+            width=1200,
+            height=0,
+            bg='beige',
+            highlightthickness=1
+        )
+        self.horizontal_line_4.create_line(0, 0, 1076, 0, fill='black', width=3)
+        self.horizontal_line_4.place(x=0, y=710)
 
         self.converted_currency = tk.Label(
             self.main_frame,
@@ -164,26 +246,28 @@ class Currency_Exchange_App:
             bg='beige',
             fg='black'
         )
-        self.converted_currency.place(x=430, y=580)
+        self.converted_currency.place(x=340, y=650)
+        self.converted_currency.place_forget()
 
         self.exchange_rate = tk.Label(
             self.main_frame,
             text='Exchange Rate: ',
             font=('Verdana', 22),
             bg='beige',
-            fg='black'
+            fg='green'
         )
-        self.exchange_rate.place(x=605, y=475)
+        self.exchange_rate.place(x=605, y=545)
+        self.exchange_rate.place_forget()
 
         # Label for creator credit
         self.created_by = tk.Label(
             self.main_frame,
             text='Created by Myszanik',
-            font=('Arial', 20),
+            font=('Arial', 18, 'bold'),
             bg='beige',
-            fg='black'
+            fg='grey'
         )
-        self.created_by.place(x=440, y=710)
+        self.created_by.place(x=450, y=715)
 
     def switch_scene(self):
         # Hide the welcome frame and show the main frame
@@ -207,10 +291,14 @@ class Currency_Exchange_App:
         from_currency = self.from_currency_entry.get().upper()
         to_currency = self.to_currency_entry.get().upper()
         amount = self.amount_entry.get()
+        self.original_currency.place(x=350, y=445)
+        self.converted_currency.place(x=340, y=650)
+        self.exchange_rate.place(x=605, y=545)
+        self.canvas.place(x=470, y=510)
 
         if from_currency in self.currencies and to_currency in self.currencies:
             try:
-                amount = float(amount)
+                amount = int(amount)
                 from_rate = self.currencies[from_currency]
                 to_rate = self.currencies[to_currency]
                 conversion_rate = to_rate / from_rate
@@ -223,6 +311,22 @@ class Currency_Exchange_App:
                 self.original_currency.config(text='Invalid amount. Please enter a number.')
         else:
             self.original_currency.config(text='Invalid currency code(s).')
+
+    def on_enter_press(self, event):
+        self.convert_currency()
+
+    def capitalize_letter(self, event):
+        # Capitalize the first letter of the content in the entry widgets
+        if event.widget == self.from_currency_entry:
+            content = self.from_currency_entry.get()
+            # Capitalize the first letter and set it back
+            self.from_currency_entry.delete(0, tk.END)
+            self.from_currency_entry.insert(0, content.upper())
+        elif event.widget == self.to_currency_entry:
+            content = self.to_currency_entry.get()
+            # Capitalize the first letter and set it back
+            self.to_currency_entry.delete(0, tk.END)
+            self.to_currency_entry.insert(0, content.upper())
 
 # Create and run the application
 root = tk.Tk()
