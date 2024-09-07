@@ -100,12 +100,12 @@ class Currency_Exchange_App:
         # From currency input
         self.from_currency_description = tk.Label(
             self.main_frame,
-            text='From currency code',
+            text='Currency to Convert From',
             font=('Verdana', 16),
             bg='beige',
             fg='black'
         )
-        self.from_currency_description.place(x=165, y=230)
+        self.from_currency_description.place(x=140, y=230)
 
         self.from_currency_entry = tk.Entry(
             self.main_frame,
@@ -118,12 +118,12 @@ class Currency_Exchange_App:
         # Entry field for amount
         self.amount_entry_description = tk.Label(
             self.main_frame,
-            text='Enter amount below',
+            text='Enter Amount to Convert',
             font=('Verdana', 16),
             bg='beige',
             fg='black'
         )
-        self.amount_entry_description.place(x=455, y=230)
+        self.amount_entry_description.place(x=430, y=230)
 
         self.amount_entry = tk.Entry(
             self.main_frame,
@@ -140,12 +140,12 @@ class Currency_Exchange_App:
         # To currency input
         self.to_currency_description = tk.Label(
             self.main_frame,
-            text='To currency code',
+            text='Currency to Convert To',
             font=('Verdana', 16),
             bg='beige',
             fg='black'
         )
-        self.to_currency_description.place(x=755, y=230)
+        self.to_currency_description.place(x=730, y=230)
 
         self.to_currency_entry = tk.Entry(
             self.main_frame,
