@@ -1,5 +1,6 @@
 import tkinter as tk
 import requests
+from PIL import Image, ImageTk
 
 class Currency_Exchange_App:
     def __init__(self, master):
@@ -34,6 +35,25 @@ class Currency_Exchange_App:
         self.from_currency_entry.bind('<KeyRelease>', self.capitalize_letter)
         self.to_currency_entry.bind('<KeyRelease>', self.capitalize_letter)
 
+        # Load and display the logo image
+        self.logo_image = self.load_image("/Users/dom/Downloads/Exchange App2.jpeg", (90, 90))
+        self.logo_photo = ImageTk.PhotoImage(self.logo_image)
+
+        # Create a Label widget to hold the image
+        self.logo_label = tk.Label(self.main_frame, image=self.logo_photo, bg='beige')
+        self.logo_label.place(x=0, y=0)  # Adjust the position as needed
+
+        # Create a Label widget to hold the image
+        self.logo_label_1 = tk.Label(self.main_frame, image=self.logo_photo, bg='beige')
+        self.logo_label_1.place(x=982, y=0)  # Adjust the position as needed
+
+    def load_image(self, image_path, size):
+        # Open the image file
+        image = Image.open(image_path)
+        # Resize the image
+        image = image.resize(size, Image.LANCZOS)  # Use LANCZOS for high-quality resizing
+        return image
+
     def welcome_screen_frame(self):
         # Welcome label
         self.welcome = tk.Label(
@@ -62,16 +82,16 @@ class Currency_Exchange_App:
         self.description = tk.Label(
             self.main_frame,
             text='Welcome!',
-            font=('Papyrus', 60),
+            font=('Tisa', 60),
             fg='black',
             bg='beige'
         )
-        self.description.place(x=415, y=10)
+        self.description.place(x=405, y=10)
 
         self.description = tk.Label(
             self.main_frame,
             text='Please type currency codes and the amount below',
-            font=('Papyrus', 45),
+            font=('Papyrus', 45, 'bold'),
             fg='black',
             bg='beige'
         )
@@ -140,12 +160,12 @@ class Currency_Exchange_App:
             self.main_frame,
             width=35,
             text='Convert',
-            font=('Avenir', 22),
+            font=('Avenir', 22, 'bold'),
             bg='beige',
             fg='black',
             command=self.convert_currency
         )
-        self.convert_button.place(x=295, y=350)
+        self.convert_button.place(x=275, y=350)
 
         # Labels for original and converted currencies
         self.original_currency = tk.Label(
@@ -169,6 +189,16 @@ class Currency_Exchange_App:
         self.canvas.create_line(70, 5, 70, 100, arrow=tk.LAST, fill='black', width=2)
         self.canvas.place_forget()
 
+        self.canvas_0 = tk.Canvas(
+            self.main_frame,
+            width=0,
+            height=110,
+            bg='beige',
+            highlightthickness=1
+        )
+        self.canvas_0.create_line(70, 5, 70, 100, fill='black', width=2)
+        self.canvas_0.place(x=135, y=220)
+
         self.canvas_1 = tk.Canvas(
             self.main_frame,
             width=0,
@@ -188,6 +218,56 @@ class Currency_Exchange_App:
         )
         self.canvas_2.create_line(70, 5, 70, 100, fill='black', width=2)
         self.canvas_2.place(x=710, y=220)
+
+        self.canvas_3 = tk.Canvas(
+            self.main_frame,
+            width=0,
+            height=110,
+            bg='beige',
+            highlightthickness=1
+        )
+        self.canvas_3.create_line(70, 5, 70, 100, fill='black', width=2)
+        self.canvas_3.place(x=945, y=220)
+
+        self.canvas_4 = tk.Canvas(
+            self.main_frame,
+            width=0,
+            height=300,
+            bg='beige',
+            highlightthickness=1
+        )
+        self.canvas_4.create_line(70, 5, 70, 100, fill='black', width=2)
+        self.canvas_4.place(x=945, y=410)
+
+        self.canvas_5 = tk.Canvas(
+            self.main_frame,
+            width=0,
+            height=300,
+            bg='beige',
+            highlightthickness=1
+        )
+        self.canvas_5.create_line(70, 5, 70, 100, fill='black', width=2)
+        self.canvas_5.place(x=135, y=410)
+
+        self.canvas_6 = tk.Canvas(
+            self.main_frame,
+            width=0,
+            height=80,
+            bg='beige',
+            highlightthickness=1
+        )
+        self.canvas_6.create_line(70, 5, 70, 100, fill='black', width=2)
+        self.canvas_6.place(x=205, y=330)
+
+        self.canvas_7 = tk.Canvas(
+            self.main_frame,
+            width=0,
+            height=80,
+            bg='beige',
+            highlightthickness=1
+        )
+        self.canvas_7.create_line(70, 5, 70, 100, fill='black', width=2)
+        self.canvas_7.place(x=870, y=330)
 
         self.horizontal_line = tk.Canvas(
             self.main_frame,
@@ -265,7 +345,7 @@ class Currency_Exchange_App:
             text='Created by Myszanik',
             font=('Arial', 18, 'bold'),
             bg='beige',
-            fg='grey'
+            fg='#36454F'
         )
         self.created_by.place(x=450, y=715)
 
