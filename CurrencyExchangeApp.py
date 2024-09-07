@@ -1,4 +1,5 @@
 import tkinter as tk
+import requests
 
 class Currency_Exchange_App:
     def __init__(self, master):
@@ -22,6 +23,9 @@ class Currency_Exchange_App:
         # Setup the screens
         self.welcome_screen_frame()
         self.main_screen_frame()
+
+        # Fetch currencies when the app starts
+        self.fetch_currencies()
 
     def welcome_screen_frame(self):
         # Welcome label
@@ -59,54 +63,41 @@ class Currency_Exchange_App:
 
         self.description = tk.Label(
             self.main_frame,
-            text='Please choose currency you want to exchange and the amount',
-            font=('Papyrus', 38),
+            text='Please type currency codes and the amount below',
+            font=('Papyrus', 45),
             fg='black',
             bg='beige'
         )
-        self.description.place(x=5, y=100)
+        self.description.place(x=30, y=100)
 
-        # From currency selection
+        # From currency input
         self.from_currency_description = tk.Label(
             self.main_frame,
-            text='Select from currency',
+            text='From currency code',
             font=('Verdana', 16),
             bg='beige',
             fg='black'
         )
         self.from_currency_description.place(x=170, y=180)
 
-        self.from_currency_var = tk.StringVar(self.main_frame)
-        self.from_currency_var.set("From")  # Default text
-
-        self.from_currency = tk.OptionMenu(
+        self.from_currency_entry = tk.Entry(
             self.main_frame,
-            self.from_currency_var,
-            *[0]  # Placeholder, will be replaced by actual currency options later
-        )
-        self.from_currency.config(
-            bd=0,
-            width=4,
-            height=0,
             font=('Verdana', 23),
-            highlightbackground="beige",
-            highlightcolor="beige",
-            highlightthickness=0,
-            relief='flat'
+            width=10
         )
-        self.from_currency.place(x=220, y=225)
+        self.from_currency_entry.place(x=170, y=225)
 
         # Entry field for amount
-        self.entry_description = tk.Label(
+        self.amount_entry_description = tk.Label(
             self.main_frame,
             text='Enter amount below',
             font=('Verdana', 16),
             bg='beige',
             fg='black'
         )
-        self.entry_description.place(x=455, y=180)
+        self.amount_entry_description.place(x=455, y=180)
 
-        self.entry = tk.Entry(
+        self.amount_entry = tk.Entry(
             self.main_frame,
             width=16,
             font=('Verdana', 25),
@@ -114,38 +105,25 @@ class Currency_Exchange_App:
             fg='black',
             insertbackground='black'
         )
-        self.entry.place(x=405, y=220)  # Adjust x and y based on your window layout
-        self.entry.focus_set()  # Set focus to the entry widget
+        self.amount_entry.place(x=405, y=220)  # Adjust x and y based on your window layout
+        self.amount_entry.focus_set()  # Set focus to the entry widget
 
-        # To currency selection
+        # To currency input
         self.to_currency_description = tk.Label(
             self.main_frame,
-            text='Select to currency',
+            text='To currency code',
             font=('Verdana', 16),
             bg='beige',
             fg='black'
         )
         self.to_currency_description.place(x=720, y=180)
 
-        self.to_currency_var = tk.StringVar(self.main_frame)
-        self.to_currency_var.set("To")  # Default text
-
-        self.to_currency = tk.OptionMenu(
+        self.to_currency_entry = tk.Entry(
             self.main_frame,
-            self.to_currency_var,
-            *[0]  # Placeholder, will be replaced by actual currency options later
-        )
-        self.to_currency.config(
-            bd=0,
-            width=4,
-            height=0,
             font=('Verdana', 23),
-            highlightbackground="beige",
-            highlightcolor="beige",
-            highlightthickness=0,
-            relief='flat'
+            width=10
         )
-        self.to_currency.place(x=760, y=225)
+        self.to_currency_entry.place(x=720, y=225)
 
         # Convert button
         self.convert_button = tk.Button(
@@ -154,7 +132,8 @@ class Currency_Exchange_App:
             text='Convert',
             font=('Avenir', 22),
             bg='beige',
-            fg='black'
+            fg='black',
+            command=self.convert_currency
         )
         self.convert_button.place(x=295, y=310)
 
@@ -211,8 +190,41 @@ class Currency_Exchange_App:
         self.welcome_frame.lower()  # Hides the welcome frame
         self.main_frame.lift()  # Shows the main frame
 
+    def fetch_currencies(self):
+        # Your API key
+        api_key = "REMOVED_OLD_KEY"
+        url = f"https://v6.exchangerate-api.com/v6/{api_key}/latest/USD"
+        response = requests.get(url)
+
+        if response.status_code == 200:
+            data = response.json()
+            self.currencies = data['conversion_rates']  # Fetch all conversion rates
+        else:
+            print("Error fetching data")
+            self.currencies = {}  # Default to empty if there's an error
+
+    def convert_currency(self):
+        from_currency = self.from_currency_entry.get().upper()
+        to_currency = self.to_currency_entry.get().upper()
+        amount = self.amount_entry.get()
+
+        if from_currency in self.currencies and to_currency in self.currencies:
+            try:
+                amount = float(amount)
+                from_rate = self.currencies[from_currency]
+                to_rate = self.currencies[to_currency]
+                conversion_rate = to_rate / from_rate
+                converted_amount = amount * conversion_rate
+
+                self.original_currency.config(text=f'Original Currency: {amount} {from_currency}')
+                self.converted_currency.config(text=f'Converted Currency: {converted_amount:.2f} {to_currency}')
+                self.exchange_rate.config(text=f'Exchange Rate: {conversion_rate:.2f}')
+            except ValueError:
+                self.original_currency.config(text='Invalid amount. Please enter a number.')
+        else:
+            self.original_currency.config(text='Invalid currency code(s).')
 
 # Create and run the application
 root = tk.Tk()
-ToDoApp = Currency_Exchange_App(root)
+app = Currency_Exchange_App(root)
 root.mainloop()
