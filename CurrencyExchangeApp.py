@@ -51,7 +51,7 @@ class CurrencyExchangeApp:
 
         # Initialize flag labels
         self.flag_1 = tk.Label(self.main_frame, bg='beige')
-        self.flag_1.place(x=15, y=245)
+        self.flag_1.place(x=12, y=245)
 
         self.flag_2 = tk.Label(self.main_frame, bg='beige')
         self.flag_2.place(x=960, y=245)
@@ -100,30 +100,30 @@ class CurrencyExchangeApp:
 
         self.description = tk.Label(
             self.main_frame,
-            text='Please type currency codes and the amount below',
-            font=('Papyrus', 45, 'bold'),
+            text='Enter country names and amount to display exchange',
+            font=('Papyrus', 43, 'bold'),
             fg='black',
             bg='beige'
         )
-        self.description.place(x=30, y=130)
+        self.description.place(x=20, y=130)
 
         # From currency input
         self.from_currency_description = tk.Label(
             self.main_frame,
-            text='Currency to Convert From',
+            text='Convert From',
             font=('Verdana', 16),
             bg='beige',
             fg='black'
         )
-        self.from_currency_description.place(x=140, y=230)
+        self.from_currency_description.place(x=190, y=230)
 
         self.from_currency_entry = tk.Entry(
             self.main_frame,
             font=('Verdana', 23),
-            width=10,
+            width=14,
             justify='center'
         )
-        self.from_currency_entry.place(x=170, y=265)
+        self.from_currency_entry.place(x=140, y=265)
 
         # Entry field for amount
         self.amount_entry_description = tk.Label(
@@ -150,20 +150,20 @@ class CurrencyExchangeApp:
         # To currency input
         self.to_currency_description = tk.Label(
             self.main_frame,
-            text='Currency to Convert To',
+            text='Convert To',
             font=('Verdana', 16),
             bg='beige',
             fg='black'
         )
-        self.to_currency_description.place(x=730, y=230)
+        self.to_currency_description.place(x=780, y=230)
 
         self.to_currency_entry = tk.Entry(
             self.main_frame,
             font=('Verdana', 23),
-            width=10,
+            width=14,
             justify='center'
         )
-        self.to_currency_entry.place(x=750, y=265)
+        self.to_currency_entry.place(x=715, y=265)
 
         # Convert button
         self.convert_button = tk.Button(
@@ -207,7 +207,7 @@ class CurrencyExchangeApp:
             highlightthickness=1
         )
         self.canvas_0.create_line(70, 5, 70, 100, fill='black', width=2)
-        self.canvas_0.place(x=135, y=220)
+        self.canvas_0.place(x=130, y=220)
 
         self.canvas_1 = tk.Canvas(
             self.main_frame,
@@ -217,7 +217,7 @@ class CurrencyExchangeApp:
             highlightthickness=1
         )
         self.canvas_1.create_line(70, 5, 70, 100, fill='black', width=2)
-        self.canvas_1.place(x=365, y=220)
+        self.canvas_1.place(x=370, y=220)
 
         self.canvas_2 = tk.Canvas(
             self.main_frame,
@@ -227,7 +227,7 @@ class CurrencyExchangeApp:
             highlightthickness=1
         )
         self.canvas_2.create_line(70, 5, 70, 100, fill='black', width=2)
-        self.canvas_2.place(x=710, y=220)
+        self.canvas_2.place(x=705, y=220)
 
         self.canvas_3 = tk.Canvas(
             self.main_frame,
@@ -409,6 +409,9 @@ class CurrencyExchangeApp:
         to_currency = self.to_currency_entry.get().strip().title()  # Capitalize properly
         amount = self.amount_entry.get().strip()
 
+        # Update flag images before changing country names to currency codes
+        self.update_flag_images(from_currency, to_currency)
+
         # Replace country names with their currency codes if needed
         if from_currency in self.country_data:
             from_currency = self.country_data[from_currency]['currencies']
@@ -425,9 +428,6 @@ class CurrencyExchangeApp:
         self.converted_currency.place(x=340, y=650)
         self.exchange_rate.place(x=605, y=545)
         self.canvas.place(x=470, y=510)
-
-        # Update flag images
-        self.update_flag_images(from_currency, to_currency)
 
         # Proceed with conversion if currency codes are valid
         if from_currency in self.currencies and to_currency in self.currencies:
@@ -450,8 +450,8 @@ class CurrencyExchangeApp:
 
     def update_flag_images(self, from_currency, to_currency):
         # Get flag URLs based on currency codes
-        flag_url_1 = self.get_flag_url(from_currency)
-        flag_url_2 = self.get_flag_url(to_currency)
+        flag_url_1 = self.get_flag_url(from_currency)  # Use the actual country name here
+        flag_url_2 = self.get_flag_url(to_currency)  # Use the actual country name here
 
         # Update flag 1
         if flag_url_1:
@@ -483,12 +483,10 @@ class CurrencyExchangeApp:
             print("No flag URL for flag 2")
             self.flag_2.config(image='')
 
-    def get_flag_url(self, currency_code):
-        # Return the flag URL based on the currency code
+    def get_flag_url(self, country_name):
         for country, data in self.country_data.items():
-            if data['currencies'] == currency_code:
+            if country_name == country:
                 return data['flag']
-        # If currency code is not found, return None
         return None
 
     def on_enter_press(self, event):
