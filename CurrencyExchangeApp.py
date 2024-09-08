@@ -1,8 +1,9 @@
 import tkinter as tk
 import requests
 from PIL import Image, ImageTk
+from io import BytesIO
 
-class Currency_Exchange_App:
+class CurrencyExchangeApp:
     def __init__(self, master):
         self.master = master
 
@@ -46,7 +47,14 @@ class Currency_Exchange_App:
 
         # Create a Label widget to hold the image
         self.logo_label_1 = tk.Label(self.main_frame, image=self.logo_photo, bg='beige')
-        self.logo_label_1.place(x=982, y=0)  # Adjust the position as needed
+        self.logo_label_1.place(x=977, y=0)  # Adjust the position as needed
+
+        # Initialize flag labels
+        self.flag_1 = tk.Label(self.main_frame, bg='beige')
+        self.flag_1.place(x=15, y=245)
+
+        self.flag_2 = tk.Label(self.main_frame, bg='beige')
+        self.flag_2.place(x=960, y=245)
 
     def load_image(self, image_path, size):
         # Open the image file
@@ -379,18 +387,19 @@ class Currency_Exchange_App:
             for country in data:
                 try:
                     name = country['name']['common'].title()  # Normalize to title case
-                    flag = country['flags']['png']
+                    flag_url = country['flags']['png']  # Use the PNG flag URL
                     currencies = list(country['currencies'].keys())
                     if currencies:
                         self.country_data[name] = {
-                            'flag': flag,
+                            'flag': flag_url,
                             'currencies': currencies[0]
                         }
-                except KeyError:
+                except KeyError as e:
+                    print(f"KeyError: {e} in country data: {country}")
                     continue
 
-            # Debugging print to check available country names
-            print("Available countries:", self.country_data.keys())
+            # Debugging print to check available country names and flag URLs
+            print("Available countries and flags:", {k: v['flag'] for k, v in self.country_data.items()})
         else:
             print("Error fetching data")
             self.country_data = {}
@@ -400,28 +409,25 @@ class Currency_Exchange_App:
         to_currency = self.to_currency_entry.get().strip().title()  # Capitalize properly
         amount = self.amount_entry.get().strip()
 
-        # Debugging prints
-        print(f"Normalized From Currency: {from_currency}")
-        print(f"Normalized To Currency: {to_currency}")
-
         # Replace country names with their currency codes if needed
         if from_currency in self.country_data:
             from_currency = self.country_data[from_currency]['currencies']
             self.from_currency_entry.delete(0, tk.END)
             self.from_currency_entry.insert(0, from_currency)
-            print(f"Replaced From Currency with Code: {from_currency}")
 
         if to_currency in self.country_data:
             to_currency = self.country_data[to_currency]['currencies']
             self.to_currency_entry.delete(0, tk.END)
             self.to_currency_entry.insert(0, to_currency)
-            print(f"Replaced To Currency with Code: {to_currency}")
 
         # Show labels when button pressed
         self.original_currency.place(x=350, y=445)
         self.converted_currency.place(x=340, y=650)
         self.exchange_rate.place(x=605, y=545)
         self.canvas.place(x=470, y=510)
+
+        # Update flag images
+        self.update_flag_images(from_currency, to_currency)
 
         # Proceed with conversion if currency codes are valid
         if from_currency in self.currencies and to_currency in self.currencies:
@@ -442,6 +448,49 @@ class Currency_Exchange_App:
 
         self.master.update_idletasks()
 
+    def update_flag_images(self, from_currency, to_currency):
+        # Get flag URLs based on currency codes
+        flag_url_1 = self.get_flag_url(from_currency)
+        flag_url_2 = self.get_flag_url(to_currency)
+
+        # Update flag 1
+        if flag_url_1:
+            try:
+                response = requests.get(flag_url_1)
+                image = Image.open(BytesIO(response.content))
+                image = image.resize((100, 60), Image.LANCZOS)
+                self.flag_1_image = ImageTk.PhotoImage(image)
+                self.flag_1.config(image=self.flag_1_image)
+            except Exception as e:
+                print(f"Error loading flag for {from_currency}: {e}")
+                self.flag_1.config(image='')
+        else:
+            print("No flag URL for flag 1")
+            self.flag_1.config(image='')
+
+        # Update flag 2
+        if flag_url_2:
+            try:
+                response = requests.get(flag_url_2)
+                image = Image.open(BytesIO(response.content))
+                image = image.resize((100, 60), Image.LANCZOS)
+                self.flag_2_image = ImageTk.PhotoImage(image)
+                self.flag_2.config(image=self.flag_2_image)
+            except Exception as e:
+                print(f"Error loading flag for {to_currency}: {e}")
+                self.flag_2.config(image='')
+        else:
+            print("No flag URL for flag 2")
+            self.flag_2.config(image='')
+
+    def get_flag_url(self, currency_code):
+        # Return the flag URL based on the currency code
+        for country, data in self.country_data.items():
+            if data['currencies'] == currency_code:
+                return data['flag']
+        # If currency code is not found, return None
+        return None
+
     def on_enter_press(self, event):
         self.convert_currency()
         self.master.update_idletasks()
@@ -461,5 +510,5 @@ class Currency_Exchange_App:
 
 # Create and run the application
 root = tk.Tk()
-app = Currency_Exchange_App(root)
+app = CurrencyExchangeApp(root)
 root.mainloop()
