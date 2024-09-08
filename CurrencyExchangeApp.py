@@ -52,9 +52,11 @@ class CurrencyExchangeApp:
         # Initialize flag labels
         self.flag_1 = tk.Label(self.main_frame, bg='beige')
         self.flag_1.place(x=12, y=245)
+        self.flag_1.place_forget()
 
         self.flag_2 = tk.Label(self.main_frame, bg='beige')
         self.flag_2.place(x=960, y=245)
+        self.flag_2.place_forget()
 
     def load_image(self, image_path, size):
         # Open the image file
@@ -145,7 +147,6 @@ class CurrencyExchangeApp:
             justify='center'
         )
         self.amount_entry.place(x=405, y=265)  # Adjust x and y based on your window layout
-        self.amount_entry.focus_set()  # Set focus to the entry widget
 
         # To currency input
         self.to_currency_description = tk.Label(
@@ -428,6 +429,8 @@ class CurrencyExchangeApp:
         self.converted_currency.place(x=340, y=650)
         self.exchange_rate.place(x=605, y=545)
         self.canvas.place(x=470, y=510)
+        self.flag_1.place(x=12, y=245)
+        self.flag_2.place(x=960, y=245)
 
         # Proceed with conversion if currency codes are valid
         if from_currency in self.currencies and to_currency in self.currencies:
