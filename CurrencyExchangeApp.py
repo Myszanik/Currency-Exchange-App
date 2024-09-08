@@ -27,6 +27,7 @@ class Currency_Exchange_App:
 
         # Fetch currencies when the app starts
         self.fetch_currencies()
+        self.fetch_country_data()  # Add this line to ensure country data is fetched
 
         # Bind Enter key to the conversion function
         self.master.bind('<Return>', self.on_enter_press)
@@ -36,7 +37,7 @@ class Currency_Exchange_App:
         self.to_currency_entry.bind('<KeyRelease>', self.capitalize_letter)
 
         # Load and display the logo image
-        self.logo_image = self.load_image("/Users/dom/Downloads/Exchange App2.jpeg", (90, 90))
+        self.logo_image = self.load_image("/Users/dom/Downloads/Exchange App.jpeg", (95, 95))
         self.logo_photo = ImageTk.PhotoImage(self.logo_image)
 
         # Create a Label widget to hold the image
@@ -368,24 +369,70 @@ class Currency_Exchange_App:
             print("Error fetching data")
             self.currencies = {}  # Default to empty if there's an error
 
+    def fetch_country_data(self):
+        url = 'https://restcountries.com/v3.1/all?fields=name,flags,currencies'
+        response = requests.get(url)
+
+        if response.status_code == 200:
+            data = response.json()
+            self.country_data = {}
+            for country in data:
+                try:
+                    name = country['name']['common'].title()  # Normalize to title case
+                    flag = country['flags']['png']
+                    currencies = list(country['currencies'].keys())
+                    if currencies:
+                        self.country_data[name] = {
+                            'flag': flag,
+                            'currencies': currencies[0]
+                        }
+                except KeyError:
+                    continue
+
+            # Debugging print to check available country names
+            print("Available countries:", self.country_data.keys())
+        else:
+            print("Error fetching data")
+            self.country_data = {}
+
     def convert_currency(self):
-        from_currency = self.from_currency_entry.get().upper()
-        to_currency = self.to_currency_entry.get().upper()
-        amount = self.amount_entry.get()
+        from_currency = self.from_currency_entry.get().strip().title()  # Capitalize properly
+        to_currency = self.to_currency_entry.get().strip().title()  # Capitalize properly
+        amount = self.amount_entry.get().strip()
+
+        # Debugging prints
+        print(f"Normalized From Currency: {from_currency}")
+        print(f"Normalized To Currency: {to_currency}")
+
+        # Replace country names with their currency codes if needed
+        if from_currency in self.country_data:
+            from_currency = self.country_data[from_currency]['currencies']
+            self.from_currency_entry.delete(0, tk.END)
+            self.from_currency_entry.insert(0, from_currency)
+            print(f"Replaced From Currency with Code: {from_currency}")
+
+        if to_currency in self.country_data:
+            to_currency = self.country_data[to_currency]['currencies']
+            self.to_currency_entry.delete(0, tk.END)
+            self.to_currency_entry.insert(0, to_currency)
+            print(f"Replaced To Currency with Code: {to_currency}")
+
+        # Show labels when button pressed
         self.original_currency.place(x=350, y=445)
         self.converted_currency.place(x=340, y=650)
         self.exchange_rate.place(x=605, y=545)
         self.canvas.place(x=470, y=510)
 
+        # Proceed with conversion if currency codes are valid
         if from_currency in self.currencies and to_currency in self.currencies:
             try:
-                amount = int(amount)
+                amount = float(amount)  # Convert amount to float
                 from_rate = self.currencies[from_currency]
                 to_rate = self.currencies[to_currency]
                 conversion_rate = to_rate / from_rate
                 converted_amount = amount * conversion_rate
 
-                self.original_currency.config(text=f'Original Currency: {amount} {from_currency}')
+                self.original_currency.config(text=f'Original Currency: {amount:.2f} {from_currency}')
                 self.converted_currency.config(text=f'Converted Currency: {converted_amount:.2f} {to_currency}')
                 self.exchange_rate.config(text=f'Exchange Rate: {conversion_rate:.2f}')
             except ValueError:
