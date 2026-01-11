@@ -44,10 +44,10 @@ Python packages (installed via `requirements.txt`):
 
 1. **Clone the repository**
    ```bash
-   git clone https://github.com/Myszanik/CurrencyExchangeApp.git
+   git clone https://github.com/Myszanik/Currency-Exchange-App.git
 2. **Navigate to the Project Directory**
    ```bash
-   cd CurrencyExchangeApp
+   cd Currency-Exchange-App
 3. **Create a virtual environment (recommended)**
    ```bash
    python -m venv .venv
