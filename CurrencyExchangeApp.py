@@ -1,7 +1,15 @@
 import tkinter as tk
+import os
+from pathlib import Path
 import requests
+from dotenv import load_dotenv
 from PIL import Image, ImageTk
 from io import BytesIO
+BASE_DIR = Path(__file__).resolve().parent
+ASSETS_DIR = BASE_DIR / "assets"
+
+load_dotenv()
+API_KEY = os.getenv("EXCHANGE_RATE_API_KEY")
 
 class CurrencyExchangeApp:
     def __init__(self, master):
@@ -38,7 +46,7 @@ class CurrencyExchangeApp:
         self.to_currency_entry.bind('<KeyRelease>', self.capitalize_letter)
 
         # Load and display the logo image
-        self.logo_image = self.load_image("/Users/dom/Downloads/Exchange App.jpeg", (95, 95))
+        self.logo_image = self.load_image(ASSETS_DIR / "exchange_app_logo.jpeg", (95, 95))
         self.logo_photo = ImageTk.PhotoImage(self.logo_image)
 
         # Create a Label widget to hold the image
@@ -366,17 +374,21 @@ class CurrencyExchangeApp:
         self.main_frame.lift()  # Shows the main frame
 
     def fetch_currencies(self):
-        # Your API key
-        api_key = "REMOVED_OLD_KEY"
-        url = f"https://v6.exchangerate-api.com/v6/{api_key}/latest/USD"
+        if not API_KEY:
+            print("Missing API key. Create a .env file with EXCHANGE_RATE_API_KEY=YOUR_KEY")
+            self.currencies = {}
+            return
+
+        url = f"https://v6.exchangerate-api.com/v6/{API_KEY}/latest/USD"
         response = requests.get(url)
 
         if response.status_code == 200:
             data = response.json()
-            self.currencies = data['conversion_rates']  # Fetch all conversion rates
+            self.currencies = data.get("conversion_rates", {})
         else:
-            print("Error fetching data")
-            self.currencies = {}  # Default to empty if there's an error
+            print("Error fetching exchange rate data")
+            self.currencies = {}
+
 
     def fetch_country_data(self):
         url = 'https://restcountries.com/v3.1/all?fields=name,flags,currencies'
