@@ -71,7 +71,12 @@ Python packages (installed via `requirements.txt`):
 - The logo image is loaded from `assets/exchange_app_logo.jpeg`.
 
 ## Screenshots
-Coming soon.
+
+### Main screen
+![Main screen](screenshots/main-screen.png)
+
+### Example conversion
+![Example conversion](screenshots/conversion-result.png)
 
 ## Acknowledgements
 - `tkinter`, for the GUI
