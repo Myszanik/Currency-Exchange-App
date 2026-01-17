@@ -40,29 +40,32 @@ Python packages (installed via `requirements.txt`):
 - `python-dotenv`
 - `Pillow`
 
-## Setup (Windows)
+## Setup (Windows, PowerShell)
 
 1. **Clone the repository**
-   ```bash
+   ```powershell
    git clone https://github.com/Myszanik/Currency-Exchange-App.git
 2. **Navigate to the Project Directory**
-   ```bash
+   ```powershell
    cd Currency-Exchange-App
 3. **Create a virtual environment (recommended)**
-   ```bash
+   ```powershell
    python -m venv .venv
 4. **Activate the virtual environment**
-   ```bash
-   .\.venv\Scripts\activate.bat
+   ```powershell
+   python -m venv .venv
+   ```
+   ```powershell
+   .\.venv\Scripts\Activate.ps1
 5. **Install Dependencies**
-   ```bash
+   ```powershell
    python -m pip install -r requirements.txt
 6. **Add your ExchangeRate-API key**  
 	- Create a file named `.env` in the project root (same folder as `CurrencyExchangeApp.py`)
-   ```bash
+   ```powershell
    EXCHANGE_RATE_API_KEY=YOUR_API_KEY_HERE
 7. **Run the Application**
-   ```bash
+   ```powershell
    python CurrencyExchangeApp.py
 
 ## Notes
